@@ -14,7 +14,8 @@ setInterval(function () {
 var fu = require("./fu"),
     sys = require("sys"),
     url = require("url"),
-    qs = require("querystring");
+    qs = require("querystring"),
+    prettify = require('./prettify');
 
 var MESSAGE_BACKLOG = 200,
     SESSION_TIMEOUT = 60 * 1000;
@@ -26,13 +27,13 @@ var channel = new function () {
   this.appendMessage = function (nick, type, text) {
     var m = { nick: nick
             , type: type // "msg", "join", "part"
-            , text: text
+            , text: text//prettify.prettyPrint('<pre class="prettyprint">'+text+'</pre>')
             , timestamp: (new Date()).getTime()
             };
 
     switch (type) {
       case "msg":
-        sys.puts("<" + nick + "> " + text);
+        sys.puts((new Date()).toString() + " <" + nick + "> " + text);
         break;
       case "join":
         sys.puts(nick + " join");
@@ -123,9 +124,6 @@ setInterval(function () {
 fu.listen(Number(process.env.PORT || PORT), HOST);
 
 fu.get("/", fu.staticHandler("index.html"));
-fu.get("/style.css", fu.staticHandler("style.css"));
-fu.get("/client.js", fu.staticHandler("client.js"));
-fu.get("/jquery-1.2.6.min.js", fu.staticHandler("jquery-1.2.6.min.js"));
 
 
 fu.get("/who", function (req, res) {
@@ -152,7 +150,7 @@ fu.get("/join", function (req, res) {
     return;
   }
 
-  //sys.puts("connection: " + nick + "@" + res.connection.remoteAddress);
+  sys.puts("connection: " + nick + "@" + res.connection.remoteAddress);
 
   channel.appendMessage(session.nick, "join");
   res.simpleJSON(200, { id: session.id

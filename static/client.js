@@ -223,18 +223,19 @@ function addMessage (from, text, time, _class) {
 
   // replace URLs with links
   text = text.replace(util.urlRE, '<a target="_blank" href="$&">$&</a>');
-
+  text = '<pre class="prettyprint">' + text + '</pre>';
   var content = '<tr>'
               + '  <td class="date">' + util.timeString(time) + '</td>'
               + '  <td class="nick">' + util.toStaticHTML(from) + '</td>'
-              + '  <td class="msg-text">' + text  + '</td>'
+              + '  <td class="msg-text">' + text + '</td>'
               + '</tr>'
               ;
+              //
   messageElement.html(content);
 
   //the log is the stream that we view
   $("#log").append(messageElement);
-
+  prettyPrint();
   //always view the most recent message when it is added
   scrollDown();
 }
@@ -435,10 +436,11 @@ $(document).ready(function() {
 
   //submit new messages when the user hits enter if the message isnt blank
   $("#entry").keypress(function (e) {
-    if (e.keyCode != 13 /* Return */) return;
-    var msg = $("#entry").attr("value").replace("\n", "");
-    if (!util.isBlank(msg)) send(msg);
-    $("#entry").attr("value", ""); // clear the entry field.
+    if (!e.shiftKey && !e.ctrlKey && e.keyCode == 13) {
+      var msg = $("#entry").attr("value").replace("\n", "");
+      if (!util.isBlank(msg)) send(msg);
+      $("#entry").attr("value", ""); // clear the entry field.
+    }
   });
 
   $("#usersLink").click(outputUsers);
@@ -469,8 +471,9 @@ $(document).ready(function() {
            , dataType: "json"
            , url: "/join"
            , data: { nick: nick }
-           , error: function () {
-               alert("error connecting to server");
+           , error: function (err) {
+              var resp = $.parseJSON(err.responseText)
+               alert(resp.error);
                showConnect();
              }
            , success: onConnect
@@ -503,5 +506,8 @@ $(document).ready(function() {
 
 //if we can, notify the server that we're going away.
 $(window).unload(function () {
+  $.ajaxSetup({
+    async: false
+  });
   jQuery.get("/part", {id: CONFIG.id}, function (data) { }, "json");
 });

@@ -22,7 +22,17 @@ fu.get = function (path, handler) {
 };
 var server = createServer(function (req, res) {
   if (req.method === "GET" || req.method === "HEAD") {
-    var handler = getMap[url.parse(req.url).pathname] || notFound;
+
+    var pathname = url.parse(req.url).pathname
+
+    var handler = getMap[pathname] || notFound;
+    
+    if(pathname.match(/static\/\w+/)) {
+      var filename = pathname.slice(1)
+      console.log(filename)
+      handler = fu.staticHandler(filename)
+      //console.log(handler)
+    }
 
     res.simpleText = function (code, body) {
       res.writeHead(code, { "Content-Type": "text/plain"
