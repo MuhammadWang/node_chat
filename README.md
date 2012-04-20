@@ -1,4 +1,4 @@
-nChat
+CodeChat
 ===
 forked from node_chat
 
