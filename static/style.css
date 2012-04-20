@@ -72,10 +72,27 @@ a:hover { text-decoration: underline; color: #aaa; }
   overflow: hidden;
 }
 
+.message .nick {
+  color:#86bfe3;
+}
+
 /* not very important info */
 .notice td, .join td, .part td, .message .date { color: #555; }
 .error td { color: #933; }
 .personal .nick, .notice .nick { color: #cd5; }
+
+
+.join {
+  opacity: 0.2;
+  -moz-opacity: 0.2;
+  filter:alpha(opacity=2);
+}
+
+.part {
+    opacity: 0.2;
+  -moz-opacity: 0.2;
+  filter:alpha(opacity=2);
+}
 
 .message {
   margin: 0.1em 0;
