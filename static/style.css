@@ -69,7 +69,6 @@ a:hover { text-decoration: underline; color: #aaa; }
   /* enough padding to clear the toolbar.. is there a better way to do this? */
   padding-bottom: 10em; 
   background: inherit;
-  overflow: hidden;
 }
 
 .message .nick {
