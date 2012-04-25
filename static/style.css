@@ -8,7 +8,7 @@ body, #entry {
 }
 body, table {
   font-family: 'Monaco', 'Menlo', monospace;
-  font-size: 14pt;
+  font-size: 14px;
   line-height: 150%;
 }
 tr,td,table {
@@ -102,6 +102,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 }
 
 .nick { 
+  width:80px;
   font-weight: bold;
   padding: 0 1em 0 0.5em;
 }
