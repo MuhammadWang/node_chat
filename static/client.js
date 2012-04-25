@@ -326,12 +326,14 @@ function longPoll (data) {
            }
          , success: function (data) {
              transmission_errors = 0;
+
              //if everything went well, begin another request immediately
              //the server will take a long time to respond
              //how long? well, it will wait until there is another message
              //and then it will return it to us and close the connection.
              //since the connection is closed when we get data, we longPoll again
              longPoll(data);
+             prettyPrint();
            }
          });
 }
