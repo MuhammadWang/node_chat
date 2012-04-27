@@ -333,7 +333,9 @@ function longPoll (data) {
              //and then it will return it to us and close the connection.
              //since the connection is closed when we get data, we longPoll again
              longPoll(data);
-             prettyPrint();
+             prettyPrint(function(){
+              $(".prettyprint").removeClass('prettyprint');
+             });
            }
          });
 }
