@@ -4,9 +4,9 @@ var CONFIG = { debug: false
              , last_message_time: 1
              , focus: true //event listeners bound in onConnect
              , unread: 0 //updated in the message-processing loop
-             };
+           };
 
-var nicks = [];
+           var nicks = [];
 
 //  CUT  ///////////////////////////////////////////////////////////////////
 /* This license and copyright apply to all code until the next "CUT"
@@ -56,7 +56,7 @@ SOFTWARE.
  * --> 'Just now'
  *
  */
-Date.prototype.toRelativeTime = function(now_threshold) {
+ Date.prototype.toRelativeTime = function(now_threshold) {
   var delta = new Date() - this;
 
   now_threshold = parseInt(now_threshold, 10);
@@ -99,7 +99,7 @@ Date.prototype.toRelativeTime = function(now_threshold) {
  * Wraps up a common pattern used with this plugin whereby you take a String
  * representation of a Date, and want back a date object.
  */
-Date.fromString = function(str) {
+ Date.fromString = function(str) {
   return new Date(Date.parse(str));
 };
 
@@ -151,8 +151,8 @@ util = {
   toStaticHTML: function(inputHtml) {
     inputHtml = inputHtml.toString();
     return inputHtml.replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;");
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
   }, 
 
   //pads n with zeros on the left,
@@ -183,7 +183,8 @@ util = {
 
 //used to keep the most recent messages visible
 function scrollDown () {
-  window.scrollBy(0, 100000000000000000);
+  //window.scrollBy(0, 100000000000000000);
+  $("body").animate({ scrollTop: $(document).height() });
   $("#entry").focus();
 }
 
@@ -225,19 +226,19 @@ function addMessage (from, text, time, _class) {
   text = text.replace(util.urlRE, '<a target="_blank" href="$&">$&</a>');
   text = '<pre class="prettyprint">' + text + '</pre>';
   var content = '<tr>'
-              + '  <td class="date">' + util.timeString(time) + '</td>'
-              + '  <td class="nick">' + util.toStaticHTML(from) + '</td>'
-              + '  <td class="msg-text">' + text + '</td>'
-              + '</tr>'
-              ;
+  + '  <td class="date">' + util.timeString(time) + '</td>'
+  + '  <td class="nick">' + util.toStaticHTML(from) + '</td>'
+  + '  <td class="msg-text">' + text + '</td>'
+  + '</tr>'
+  ;
               //
-  messageElement.html(content);
+              messageElement.html(content);
 
   //the log is the stream that we view
   $("#log").append(messageElement);
 
   //always view the most recent message when it is added
-  scrollDown();
+  //scrollDown();
 }
 
 function updateRSS () {
@@ -287,19 +288,19 @@ function longPoll (data) {
       //dispatch new messages to their appropriate handlers
       switch (message.type) {
         case "msg":
-          if(!CONFIG.focus){
-            CONFIG.unread++;
-          }
-          addMessage(message.nick, message.text, message.timestamp);
-          break;
+        if(!CONFIG.focus){
+          CONFIG.unread++;
+        }
+        addMessage(message.nick, message.text, message.timestamp);
+        break;
 
         case "join":
-          userJoin(message.nick, message.timestamp);
-          break;
+        userJoin(message.nick, message.timestamp);
+        break;
 
         case "part":
-          userPart(message.nick, message.timestamp);
-          break;
+        userPart(message.nick, message.timestamp);
+        break;
       }
     }
     //update the document title to include unread message count if blurred
@@ -314,17 +315,17 @@ function longPoll (data) {
 
   //make another request
   $.ajax({ cache: false
-         , type: "GET"
-         , url: "/recv"
-         , dataType: "json"
-         , data: { since: CONFIG.last_message_time, id: CONFIG.id }
-         , error: function () {
-             addMessage("", "long poll error. trying again...", new Date(), "error");
-             transmission_errors += 1;
+   , type: "GET"
+   , url: "/recv"
+   , dataType: "json"
+   , data: { since: CONFIG.last_message_time, id: CONFIG.id }
+   , error: function () {
+     addMessage("", "long poll error. trying again...", new Date(), "error");
+     transmission_errors += 1;
              //don't flood the servers on error, wait 10 seconds before retrying
              setTimeout(longPoll, 10*1000);
            }
-         , success: function (data) {
+           , success: function (data) {
              transmission_errors = 0;
 
              //if everything went well, begin another request immediately
@@ -335,7 +336,7 @@ function longPoll (data) {
              longPoll(data);
              prettyPrint(function(){
               $(".prettyprint").removeClass('prettyprint');
-             });
+            });
            }
          });
 }
@@ -347,6 +348,7 @@ function send(msg) {
     // XXX should add to messages immediately
     jQuery.get("/send", {id: CONFIG.id, text: msg}, function (data) { }, "json");
   }
+  scrollDown();
 }
 
 //Transition the page to the state that prompts the user for a nickname
@@ -476,12 +478,12 @@ $(document).ready(function() {
            , url: "/join"
            , data: { nick: nick }
            , error: function (err) {
-              var resp = $.parseJSON(err.responseText)
-               alert(resp.error);
-               showConnect();
-             }
-           , success: onConnect
-           });
+            var resp = $.parseJSON(err.responseText)
+            alert(resp.error);
+            showConnect();
+          }
+          , success: onConnect
+        });
     return false;
   });
 
